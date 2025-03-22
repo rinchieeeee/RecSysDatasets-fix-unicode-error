@@ -165,7 +165,12 @@ class ML100KDataset(BaseDataset):
         return pd.read_csv(self.inter_file, delimiter=self.inter_sep, header=None, engine='python')
 
     def load_item_data(self):
-        origin_data = pd.read_csv(self.item_file, delimiter=self.item_sep, header=None, engine='python')
+        try:
+            origin_data = pd.read_csv(self.item_file, delimiter=self.item_sep, header=None, engine='python')
+        except UnicodeDecodeError:
+            origin_data = pd.read_csv(self.item_file, delimiter=self.sep, header=None, engine='python', encoding='latin-1')
+        except Exception as e:
+            print(f"Unexpected Error: {e}")
         processed_data = origin_data.iloc[:, 0:4]
         release_year = []
         all_type = ['unkown', 'Action', 'Adventure', 'Animation',
